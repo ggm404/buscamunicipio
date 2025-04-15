@@ -1,44 +1,58 @@
-let data = [];
+document.addEventListener("DOMContentLoaded", function () {
+  const searchInput = document.getElementById("searchInput");
+  const resultsTable = document.getElementById("resultsTable");
 
-fetch("data.json")
-  .then(res => res.json())
-  .then(json => { data = json; })
-  .catch(err => console.error("Error loading data:", err));
+  let data = [];
 
-document.addEventListener("DOMContentLoaded", () => {
-  const input = document.getElementById("searchInput");
-  const resultContainer = document.getElementById("resultContainer");
+  // Fetch the JSON data
+  fetch("data.json")
+    .then(response => response.json())
+    .then(json => {
+      data = json;
+    })
+    .catch(error => {
+      console.error("Error loading JSON:", error);
+    });
 
-  input.addEventListener("input", () => {
-    const term = input.value.trim().toLowerCase();
-    resultContainer.innerHTML = "";
+  // Handle search input
+  searchInput.addEventListener("input", function () {
+    const searchTerm = searchInput.value.trim().toLowerCase();
 
-    if (!term) return;
+    // Clear previous results
+    resultsTable.innerHTML = "";
 
-    const results = data.filter(item =>
-      item["MUNICIPIO (INEGI)"]?.toLowerCase().includes(term)
+    if (searchTerm === "") return;
+
+    // Step 1: Filter rows based on search term
+    const results = data.filter(row =>
+      row["MUNICIPIO (INEGI)"]?.toLowerCase().includes(searchTerm)
     );
 
-    if (results.length === 0) {
-      resultContainer.innerHTML = "<p>No se encontraron coincidencias.</p>";
-      return;
+    // Step 2: Remove fully identical duplicates
+    const uniqueResults = Array.from(
+      new Map(results.map(row => [JSON.stringify(row), row])).values()
+    );
+
+    // Step 3: Display header (if results exist)
+    if (uniqueResults.length > 0) {
+      const headerRow = document.createElement("tr");
+      Object.keys(uniqueResults[0]).forEach(key => {
+        const th = document.createElement("th");
+        th.textContent = key;
+        headerRow.appendChild(th);
+      });
+      resultsTable.appendChild(headerRow);
     }
 
-    let html = "<table><thead><tr>";
-    Object.keys(results[0]).forEach(key => {
-      html += `<th>${key}</th>`;
-    });
-    html += "</tr></thead><tbody>";
-
-    results.forEach(row => {
-      html += "<tr>";
-      Object.values(row).forEach(val => {
-        html += `<td>${val || ""}</td>`;
+    // Step 4: Display rows
+    uniqueResults.forEach(row => {
+      const tr = document.createElement("tr");
+      Object.values(row).forEach(value => {
+        const td = document.createElement("td");
+        td.textContent = value;
+        tr.appendChild(td);
       });
-      html += "</tr>";
+      resultsTable.appendChild(tr);
     });
-
-    html += "</tbody></table>";
-    resultContainer.innerHTML = html;
   });
 });

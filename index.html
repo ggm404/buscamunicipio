@@ -2,19 +2,47 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Buscador de Municipios</title>
-  <script src="script.js" defer></script>
+  <title>Search Tool</title>
   <style>
-    body { font-family: Arial; padding: 20px; }
-    input { padding: 8px; width: 300px; }
-    .result { margin-top: 20px; }
-    table { border-collapse: collapse; width: 100%; margin-top: 10px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 1rem;
+      font-size: 16px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f4f4f4;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
   </style>
 </head>
 <body>
-  <h1>Buscar Municipio</h1>
-  <input type="text" id="searchInput" placeholder="Escribe el nombre del municipio...">
-  <div class="result" id="resultContainer"></div>
+  <h1>Municipio Search</h1>
+  <input type="text" id="searchInput" placeholder="Type to search MUNICIPIO (INEGI)...">
+
+  <table id="resultsTable"></table>
+
+  <script src="script.js"></script>
 </body>
 </html>
